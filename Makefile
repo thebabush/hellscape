@@ -1,18 +1,23 @@
-all: hellscape.exe
+# WARNING(babush): I can't write Makefiles
 
-test: hellscape.exe
-	hellscape.exe
+all: hellscape
 
-hellscape.exe: objs/hellscape.obj
-	link /nologo /debug /SUBSYSTEM:CONSOLE /OUT:hellscape.exe objs/hellscape.obj
+test: hellscape
+	hellscape
 
-objs/hellscape.obj: objs srcs/hellscape.asm
-	nasm -g -f win32 -o objs/hellscape.obj srcs/hellscape.asm
+hellscape: objs/hellscape.o objs/main.o
+	gcc -m32 -o hellscape objs/hellscape.o objs/main.o
+
+objs/hellscape.o: objs srcs/hellscape.asm
+	nasm -g -f elf32 -o objs/hellscape.o srcs/hellscape.asm
+
+objs/main.o: objs srcs/main.c
+	gcc -m32 -o objs/main.o -c srcs/main.c
 
 objs:
-	mkdir objs
+	mkdir -p objs
 
 clean:
-	-rmdir /s /q objs 2>NUL
-	-del hellscape.exe hellscape.pdb hellscape.ilk 2>NUL
+	rm -rf objs
+	rm hellscape
 

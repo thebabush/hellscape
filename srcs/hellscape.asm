@@ -13,11 +13,11 @@
 
 section .code
 
-global mainCRTStartup
-mainCRTStartup:
+global fuzz
+fuzz:
 	; Get a pointer to the payload (always 32 bytes), add 4 to it to skip
 	; over the switching byte but also maintain alignment
-	mov ebx, payload
+	mov ebx, dword [esp + 4]
 	add ebx, 4
 
 	; The next compares switch against the first byte in the payload. This
@@ -44,8 +44,9 @@ mainCRTStartup:
 	je  fuzz_dword_memcmp_twice
 
 	; Exit the program
-	xor eax, eax
-	ret
+	mov  al, 1
+	mov ebx, 0
+	int 0x80
 
 ; __stdcall (callee cleans up stack)
 ; int memory_matches_bytes(const uint8_t *a1, const uint8_t *a2, size_t length)
@@ -356,9 +357,4 @@ fuzz_dword_memcmp_twice_trigger_b_len: equ $ - fuzz_dword_memcmp_twice_trigger_b
 
 ; Trigger for case 5
 ;payload: db 5, 0, 0, 0, "WuRDTWICEohNO!@#"
-
-align 4
-global payload
-payload:
-times 32-($-payload) db 0
 
