@@ -44,7 +44,7 @@ fuzz:
 	je  fuzz_dword_memcmp_twice
 
 	; Exit the program
-	mov  al, 1
+	mov eax, 1
 	mov ebx, 0
 	int 0x80
 
